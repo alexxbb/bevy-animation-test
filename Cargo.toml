@@ -19,6 +19,6 @@ bevy = { git = "https://github.com/bevyengine/bevy.git", rev = "846a871cb2761f61
 name = "muzik"
 path = "src/main.rs"
 
-[[bin]]
-name = "dev"
-path = "src/_main.rs"
+#[[bin]]
+#name = "dev"
+#path = "src/dev/dev.rs"
