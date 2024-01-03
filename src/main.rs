@@ -21,7 +21,7 @@ fn main() {
         })
         .insert_resource(DirectionalLightShadowMap { size: 1024 })
         .add_systems(Startup, (default_scene, create_bar_grid))
-        .add_systems(Update, (rotate_bars, deform_bar))
+        .add_systems(Update, (rotate_bars))
         .add_systems(Update, close_on_esc)
         .run();
 }
@@ -47,7 +47,7 @@ fn default_scene(
     commands.spawn(DirectionalLightBundle {
         directional_light: DirectionalLight {
             illuminance: 32000.0,
-            shadows_enabled: true,
+            shadows_enabled: false,
             ..default()
         },
         transform: Transform::from_translation(Vec3::new(0.0, 20.0, -10.0))
