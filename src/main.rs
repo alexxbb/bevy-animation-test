@@ -14,6 +14,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_plugins(FrameTimeDiagnosticsPlugin)
+        .add_plugins(MaterialPlugin::<BarMaterial>::default())
         .add_plugins(LogDiagnosticsPlugin {
             debug: false,
             filter: Some(vec![FrameTimeDiagnosticsPlugin::FPS]),

@@ -1,19 +1,22 @@
+use bevy::pbr::{MaterialPipeline, MaterialPipelineKey};
 use bevy::prelude::*;
-use bevy::render::mesh::VertexAttributeValues;
+use bevy::render::mesh::{MeshVertexBufferLayout, VertexAttributeValues};
+use bevy::render::render_resource::{AsBindGroup, RenderPipelineDescriptor, ShaderRef, SpecializedMeshPipelineError};
+use bevy::reflect::{TypeUuid};
 
 #[derive(Component)]
 pub(crate) struct Bar;
 
 #[derive(Bundle)]
 pub struct BarBundle {
-    mesh: PbrBundle,
+    mesh: MaterialMeshBundle<BarMaterial>,
     marker: Bar,
 }
 
 impl BarBundle {
-    fn new(origin: Vec3, mesh: Handle<Mesh>, material: Handle<StandardMaterial>) -> Self {
+    fn new(origin: Vec3, mesh: Handle<Mesh>, material: Handle<BarMaterial>) -> Self {
         BarBundle {
-            mesh: PbrBundle {
+            mesh: MaterialMeshBundle {
                 mesh,
                 material,
                 transform: Transform::from_translation(origin),
@@ -23,21 +26,22 @@ impl BarBundle {
         }
     }
     fn mesh() -> impl Into<Mesh> {
-        shape::Box::new(0.1, 4.0, 0.1)
+        shape::Box::new(0.5, 4.0, 0.5)
     }
 }
 
 pub fn create_bar_grid(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
+    mut materials: ResMut<Assets<BarMaterial>>,
 ) {
-    let material = materials.add(Color::rgb(0.9, 0.1, 0.1).into());
-    const SIZE: i32 = 40;
+    // let material = materials.add(Color::rgb(0.9, 0.1, 0.1).into());
+    let material = materials.add(BarMaterial{color: Color::rgb(0.9, 0.1, 0.1).into()});
+    const SIZE: i32 = 10;
     for i in -SIZE..SIZE {
         for j in -SIZE..SIZE {
-            let i = i as f32 * 0.25;
-            let j = j as f32 * 0.25;
+            let i = i as f32 * 1.;
+            let j = j as f32 * 1.;
             let origin = Vec3::new(i, 0., j);
             let mesh = meshes.add(BarBundle::mesh().into());
             let bar = BarBundle::new(origin, mesh.clone(), material.clone());
@@ -74,4 +78,19 @@ pub fn deform_bar(
             }
         }
     }
+}
+
+
+#[derive(Asset, TypePath, AsBindGroup, Debug, Clone, TypeUuid)]
+#[uuid = "8014bf20-d959-11ed-afa1-0242ac120001"]
+pub struct BarMaterial {
+    #[uniform(0)]
+    color: Color
+}
+
+impl Material for BarMaterial {
+    fn vertex_shader() -> ShaderRef {
+        "shaders/bar.wgsl".into()
+    }
+
 }
